@@ -33,6 +33,7 @@ jobs:
         with:
           name: ${{ github.ref_name }}
           body: ${{ steps.release-notes.outputs.releasenotes }}
+
       - name: commit changes
         uses: EndBug/add-and-commit@v9
         with:
