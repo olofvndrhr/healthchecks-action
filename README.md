@@ -7,12 +7,12 @@ healthchecks action for creating+pinging the api.
 | **input**      | **description**                    | **valid inputs**            | **needed for** |
 | -------------- | ---------------------------------- | --------------------------- | -------------- |
 | baseurl        | url of the healthchecks instance   | {str} _(with http(s)://)_   | create + ping  |
-| apikey         | api write key for check creation   | {str}                       |                |
-| check_name     | name for the check                 | {str}                       |                |
-| check_schedule | schedule for the check             | {str} _(in cron format)_    |                |
-| grace          | grace time for the check"          | {int}                       |                |
-| path           | path to ping after {baseurl}/ping/ | {str}                       |                |
-| method         | ping method (after ping path)      | `/start`\| `/fail`\| {none} |                |
+| apikey         | api write key for check creation   | {str}                       | create         |
+| check_name     | name for the check                 | {str}                       | create         |
+| check_schedule | schedule for the check             | {str} _(in cron format)_    | create         |
+| grace          | grace time for the check"          | {int}                       | create         |
+| path           | path to ping after {baseurl}/ping/ | {str}                       | ping           |
+| method         | ping method (after ping path)      | `/start`\| `/fail`\| {none} | ping           |
 
 ## outputs
 
