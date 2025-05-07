@@ -117,7 +117,7 @@ def main() -> None:
         create_check(baseurl, api_key, check_name, check_schedule, grace_int)
 
     # ping check
-    if all([ping_path, method]):
+    if ping_path:
         ping_check(baseurl, ping_path, method, ping_body)
 
 
