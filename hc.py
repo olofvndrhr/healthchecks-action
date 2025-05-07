@@ -7,8 +7,10 @@ import httpx
 def create_check(
     baseurl: str, api_key: str, check_name: str, check_schedule: str, grace: int
 ) -> None:
-    check_slug = re.sub(r"[^0-9a-zA-Z\-]", "", check_name)
+    _check_slug = re.sub(r"[^0-9a-zA-Z\-]", "-", check_name)
+    check_slug = re.sub(r"-{2,}", "-", _check_slug)
 
+    print(f"creating slug from name={check_name}, slug={check_slug}")
     headers = {
         "Content-Type": "application/json",
         "X-Api-Key": api_key,
@@ -42,30 +44,49 @@ def create_check(
             raise ValueError
 
 
-def ping_check(baseurl: str, ping_path: str, method: str) -> None:
-    match method:
-        case "start":
-            ping_method = "/start"
-        case "fail":
-            ping_method = "/fail"
-        case _:
-            ping_method = ""
-
-    pingurl = f"{baseurl}/ping/{ping_path}{ping_method}"
-
-    print(f"pinging: {pingurl}")
+def _ping_get(url: str) -> None:
     for tries, _ in enumerate(range(3), 1):
+        print(f"GET pinging: {url} ({tries})")
         try:
-            r = httpx.get(
-                pingurl,
-                follow_redirects=True,
-                timeout=10,
-            )
+            r = httpx.get(url, follow_redirects=True, timeout=10)
             r.raise_for_status()
         except Exception as exc:
-            print(f"error in request ({tries}). {exc=}")
+            print(f"error in request. {exc=}")
             if tries >= 3:
                 raise exc
+        else:
+            break
+
+
+def _ping_post(url: str, data: str) -> None:
+    for tries, _ in enumerate(range(3), 1):
+        print(f"POST pinging: {url} ({tries})")
+        try:
+            r = httpx.post(url, content=data, follow_redirects=True, timeout=10)
+            r.raise_for_status()
+        except Exception as exc:
+            print(f"error in request. {exc=}")
+            if tries >= 3:
+                raise exc
+        else:
+            break
+
+
+def ping_check(baseurl: str, ping_path: str, method: str, data: str) -> None:
+    match method:
+        case "start":
+            pingurl = f"{baseurl}/ping/{ping_path}/start"
+        case "fail":
+            pingurl = f"{baseurl}/ping/{ping_path}/fail"
+        case "log":
+            pingurl = f"{baseurl}/ping/{ping_path}/log"
+        case _:
+            pingurl = f"{baseurl}/ping/{ping_path}"
+
+    if data:
+        _ping_post(pingurl, data)
+    else:
+        _ping_get(pingurl)
 
 
 def main() -> None:
@@ -83,6 +104,7 @@ def main() -> None:
     # check ping specific
     ping_path = os.getenv("HC_PING_PATH", "")
     method = os.getenv("HC_METHOD", "")
+    ping_body = os.getenv("HC_PING_BODY", "")
 
     # create check
     if all([api_key, check_name, check_schedule, grace]):
@@ -96,7 +118,7 @@ def main() -> None:
 
     # ping check
     if all([ping_path, method]):
-        ping_check(baseurl, ping_path, method)
+        ping_check(baseurl, ping_path, method, ping_body)
 
 
 if __name__ == "__main__":

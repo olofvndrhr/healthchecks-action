@@ -13,6 +13,7 @@ healthchecks action for creating+pinging the api.
 | grace          | grace time for the check"          | {int}                     | create         |
 | path           | path to ping after {baseurl}/ping/ | {str}                     | ping           |
 | method         | ping method (after ping path)      | `start`\| `fail`\| {none} | ping           |
+| ping_body      | content to add to ping body        | `start`\| `fail`\| {none} | ping           |
 
 ## outputs
 

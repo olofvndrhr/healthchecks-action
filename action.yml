@@ -23,6 +23,9 @@ inputs:
   method:
     description: "ping method"
     required: false
+  ping_body:
+    description: "content to add to ping body"
+    required: false
 
 runs:
   using: "composite"
@@ -42,3 +45,4 @@ runs:
         HC_GRACE: ${{ inputs.grace }}
         HC_PING_PATH: ${{ inputs.path }}
         HC_METHOD: ${{ inputs.method }}
+        HC_PING_BODY: ${{ inputs.ping_body }}
