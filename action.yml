@@ -29,11 +29,11 @@ runs:
   steps:
     - name: install deps
       shell: bash
-      run: pip install -U httpx
+      run: pip install -qU httpx
 
     - name: run hc script
       shell: bash
-      run: python3 hc.py
+      run: python3 ${{ github.action_path }}/hc.py
       env:
         HC_BASE_URL: ${{ inputs.baseurl }}
         HC_API_KEY: ${{ inputs.apikey }}
