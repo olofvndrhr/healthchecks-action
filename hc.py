@@ -82,11 +82,7 @@ def main() -> None:
     method = os.getenv("HC_METHOD", "")
 
     # create check
-    if api_key:
-        if not all([check_name, check_schedule, grace]):
-            print("not all needed variables provied")
-            raise ValueError
-
+    if all([api_key, check_name, check_schedule, grace]):
         try:
             grace_int = int(grace)
         except Exception as exc:
@@ -95,11 +91,8 @@ def main() -> None:
 
         create_check(baseurl, api_key, check_name, check_schedule, grace_int)
 
-    else:
-        if not all([ping_path, method]):
-            print("not all needed variables provied")
-            raise ValueError
-
+    # ping check
+    if all([ping_path, method]):
         ping_check(baseurl, ping_path, method)
 
 
