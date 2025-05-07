@@ -104,6 +104,7 @@ def main() -> None:
     # check ping specific
     ping_path = os.getenv("HC_PING_PATH", "")
     method = os.getenv("HC_METHOD", "")
+    succeeded = os.getenv("HC_SUCCEEDED", "")
     ping_body = os.getenv("HC_PING_BODY", "")
 
     # create check
@@ -118,7 +119,14 @@ def main() -> None:
 
     # ping check
     if ping_path:
-        ping_check(baseurl, ping_path, method, ping_body)
+        if succeeded and succeeded == "true":
+            ping_method = ""
+        elif succeeded and succeeded == "false":
+            ping_method = "fail"
+        else:
+            ping_method = method
+
+        ping_check(baseurl, ping_path, ping_method, ping_body)
 
 
 if __name__ == "__main__":
