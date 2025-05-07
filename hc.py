@@ -61,6 +61,7 @@ def _ping_get(url: str) -> None:
 def _ping_post(url: str, data: str) -> None:
     for tries, _ in enumerate(range(3), 1):
         print(f"POST pinging: {url} ({tries})")
+        print(f"POST ping data={data}")
         try:
             r = httpx.post(url, content=data, follow_redirects=True, timeout=10)
             r.raise_for_status()
@@ -75,12 +76,16 @@ def _ping_post(url: str, data: str) -> None:
 def ping_check(baseurl: str, ping_path: str, method: str, data: str) -> None:
     match method:
         case "start":
+            print("healthchecks - start")
             pingurl = f"{baseurl}/ping/{ping_path}/start"
         case "fail":
+            print("healthchecks - fail")
             pingurl = f"{baseurl}/ping/{ping_path}/fail"
         case "log":
+            print("healthchecks - log")
             pingurl = f"{baseurl}/ping/{ping_path}/log"
         case _:
+            print("healthchecks - ok")
             pingurl = f"{baseurl}/ping/{ping_path}"
 
     if data:
@@ -120,8 +125,10 @@ def main() -> None:
     # ping check
     if ping_path:
         if succeeded and succeeded == "true":
+            print("succeeded = true")
             ping_method = ""
         elif succeeded and succeeded == "false":
+            print("succeeded = false")
             ping_method = "fail"
         else:
             ping_method = method
