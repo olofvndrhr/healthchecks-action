@@ -4,15 +4,15 @@ healthchecks action for creating+pinging the api.
 
 ## inputs
 
-| **input**      | **description**                    | **valid inputs**            | **needed for** |
-| -------------- | ---------------------------------- | --------------------------- | -------------- |
-| baseurl        | url of the healthchecks instance   | {str} _(with http(s)://)_   | create + ping  |
-| apikey         | api write key for check creation   | {str}                       | create         |
-| check_name     | name for the check                 | {str}                       | create         |
-| check_schedule | schedule for the check             | {str} _(in cron format)_    | create         |
-| grace          | grace time for the check"          | {int}                       | create         |
-| path           | path to ping after {baseurl}/ping/ | {str}                       | ping           |
-| method         | ping method (after ping path)      | `/start`\| `/fail`\| {none} | ping           |
+| **input**      | **description**                    | **valid inputs**          | **needed for** |
+| -------------- | ---------------------------------- | ------------------------- | -------------- |
+| baseurl        | url of the healthchecks instance   | {str} _(with http(s)://)_ | create + ping  |
+| apikey         | api write key for check creation   | {str}                     | create         |
+| check_name     | name for the check                 | {str}                     | create         |
+| check_schedule | schedule for the check             | {str} _(in cron format)_  | create         |
+| grace          | grace time for the check"          | {int}                     | create         |
+| path           | path to ping after {baseurl}/ping/ | {str}                     | ping           |
+| method         | ping method (after ping path)      | `start`\| `fail`\| {none} | ping           |
 
 ## outputs
 
@@ -29,26 +29,36 @@ on:
             - "v*.*.*"
 
 jobs:
-    get-release-notes:
+    healthchecks:
         runs-on: ubuntu-latest
         steps:
-            - name: checkout code
-              uses: actions/checkout@v3
-
-            - name: get release notes
-              id: get-releasenotes
-              uses: olofvndrhr/releasenote-gen@v1
+            - name: create check
+              uses: olofvndrhr/healthchecks-action@v1
               with:
-                  version: latest # default
-                  changelog: CHANGELOG.md # default
-                  releasenotes: RELEASENOTES.md # default
+                  baseurl: https://hc.example.com
+                  apikey: "${{ secrets.APIKEY }}"
+                  check_name: check1
+                  check_schedule: "5 * * * *"
+                  grace: 600
 
-            - name: get release notes for ref
-              uses: olofvndrhr/releasenote-gen@v1
+            - name: start check
+              uses: olofvndrhr/healthchecks-action@v1
               with:
-                  version: ${{ github.ref_name }} # name of the pushed tag
+                  baseurl: https://hc.example.com
+                  path: xxxxxx
+                  method: start
 
-            # use the generated release notes string for further steps
-            - name: print release notes
-              run: echo "${{ steps.get-releasenotes.outputs.releasenotes }}"
+            - name: stop check
+              uses: olofvndrhr/healthchecks-action@v1
+              with:
+                  baseurl: https://hc.example.com
+                  path: xxxxxx
+
+            - name: fail check
+              if: ${{ failure()
+              uses: olofvndrhr/healthchecks-action@v1
+              with:
+                  baseurl: https://hc.example.com
+                  path: xxxxxx
+                  method: fail
 ```
