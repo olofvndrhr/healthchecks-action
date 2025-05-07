@@ -1,0 +1,44 @@
+name: "healthchecks action"
+description: "create + ping healthchecks"
+
+inputs:
+  baseurl:
+    description: "url of the healthchecks instance"
+    required: true
+  apikey:
+    description: "api write key for check creation"
+    required: false
+  check_name:
+    description: "name for the heck"
+    required: false
+  check_schedule:
+    description: "schedule for the check"
+    required: false
+  grace:
+    description: "grace time for the check"
+    required: false
+  path:
+    description: "path to ping after {baseurl}/ping/"
+    required: false
+  method:
+    description: "ping method"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: install deps
+      shell: bash
+      run: pip install -U httpx
+
+    - name: run hc script
+      shell: bash
+      run: python3 hc.py
+      env:
+        HC_BASE_URL: ${{ inputs.baseurl }}
+        HC_API_KEY: ${{ inputs.apikey }}
+        HC_CHECK_NAME: ${{ inputs.check_name }}
+        HC_CHECK_SCHEDULE: ${{ inputs.check_schedule }}
+        HC_GRACE: ${{ inputs.grace }}
+        HC_PING_PATH: ${{ inputs.path }}
+        HC_METHOD: ${{ inputs.method }}
