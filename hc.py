@@ -69,7 +69,10 @@ def ping_check(baseurl: str, ping_path: str, method: str) -> None:
 
 
 def main() -> None:
-    baseurl = os.environ["HC_BASE_URL"]
+    baseurl = os.getenv("HC_BASE_URL")
+    if not baseurl:
+        print("no baseurl given")
+        raise ValueError
 
     # check creating specific
     api_key = os.getenv("HC_API_KEY", "")
