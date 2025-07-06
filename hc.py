@@ -124,10 +124,10 @@ def main() -> None:
 
     # ping check
     if ping_path:
-        if succeeded and succeeded == "true":
+        if succeeded and succeeded.lower() in ["true", "success"]:
             print("succeeded = true")
             ping_method = ""
-        elif succeeded and succeeded == "false":
+        elif succeeded and succeeded.lower() in ["false", "failure", "cancelled"]:
             print("succeeded = false")
             ping_method = "fail"
         else:
